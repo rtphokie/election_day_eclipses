@@ -1,0 +1,10 @@
+#requests
+#requests_cache
+#bs4
+#git+https://github.com/matplotlib/basemap.git
+#matplotlib
+##simple_cache
+#pandas
+#pyephem
+skyfield
+pytz
