@@ -13,7 +13,7 @@ ts = load.timescale()
 us_states_and_territories = {
     # state, first year voting in federal elections, timezone, capital coordinates
     'Alabama': {'year': 1820, 'tz': 'US/Central', 'lat': 32.377716, 'lon': -86.300568},
-    'Alaska': {'year': 1959, 'tz': 'US/Alaska', 'lat': 58.301598, 'lon': -134.420212},
+    'Alaska': {'year': 1959, 'tz': 'America/Anchorage', 'lat': 58.301598, 'lon': -134.420212},
     'American Samoa': {'year': 1900, 'tz': 'Pacific/Samoa', 'lat': -14.2710, 'lon': -170.1322},
     'Arizona': {'year': 1912, 'tz': 'US/Mountain', 'lat': 33.448143, 'lon': -112.096962},
     'Arkansas': {'year': 1836, 'tz': 'US/Central', 'lat': 34.746613, 'lon': -92.288986},
@@ -105,6 +105,7 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
 
 
         visible_tzs = set()
+        visible_times = set()
         for state, data_state in us_states_and_territories.items():
             tz = timezone(data_state['tz'])
             if year < data_state['year']:
@@ -116,6 +117,7 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
                 altitude = moon_above_horizon(data_state['lat'], data_state['lon'], ti)
                 if altitude > 0:
                     visible_tzs.add(data_state['tz'])
+                    visible_times.add(eclipse_local_time)
                     all_election_year_visible_eclipses.add(utc.astimezone(timezone('US/Eastern')))
                     all_election_year_eclipse_by_type[eclipse_type].add(year)
                     if year < 2022:
@@ -123,7 +125,7 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
                     if year > 2022:
                         future_election_year_eclipse_by_type[eclipse_type].add(year)
         if len(visible_tzs) > 0:
-            print(f"{eclipse_type:10} {utc.astimezone(timezone('US/Eastern')).strftime('%a %Y-%m-%d %H:%M')} ET")
+            print(f"{eclipse_type:10} {list(visible_times)[0].strftime('%a %Y-%m-%d %H:%M %Z')}")
             print(f"   {', '.join(visible_tzs)}")
 
     print('all election lunar eclipses')
