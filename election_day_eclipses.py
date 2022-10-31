@@ -89,7 +89,8 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
     t0 = ts.utc(firstyear, 1, 1)
     t1 = ts.utc(lastyear, 1, 1)
     t, y, details = eclipselib.lunar_eclipses(t0, t1, ephemeris)  # mid eclipse time
-    all_election_year_eclipses = []
+    all_election_year_eclipses = set()
+    all_election_year_visible_eclipses = set()
     all_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
     past_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
     future_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
@@ -102,7 +103,6 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
             continue
         eclipse_type = eclipselib.LUNAR_ECLIPSES[yi]
 
-        all_election_year_eclipses.append(utc.astimezone(timezone('US/Eastern')))
 
         visible_tzs = set()
         for state, data_state in us_states_and_territories.items():
@@ -112,9 +112,11 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
             first_day, last_day = election_days(tz, utc.year)
             eclipse_local_time = utc.astimezone(tz)
             if first_day <= eclipse_local_time <= last_day:
+                all_election_year_eclipses.add(utc.astimezone(timezone('US/Eastern')))
                 altitude = moon_above_horizon(data_state['lat'], data_state['lon'], ti)
                 if altitude > 0:
                     visible_tzs.add(data_state['tz'])
+                    all_election_year_visible_eclipses.add(utc.astimezone(timezone('US/Eastern')))
                     all_election_year_eclipse_by_type[eclipse_type].add(year)
                     if year < 2022:
                         past_election_year_eclipse_by_type[eclipse_type].add(year)
@@ -125,7 +127,9 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
             print(f"   {', '.join(visible_tzs)}")
 
     print('all election lunar eclipses')
-    pprint(all_election_year_eclipse_by_type)
+    print(len(all_election_year_eclipses))
+    print('all election visible lunar eclipses')
+    print(len(all_election_year_visible_eclipses))
     print('past election lunar eclipses')
     pprint(past_election_year_eclipse_by_type)
     print('future election lunar eclipses')
