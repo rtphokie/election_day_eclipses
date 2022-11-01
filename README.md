@@ -3,25 +3,27 @@ lunar eclipse. That is true of election day as we know it today (first Tuesday a
 
 
 ## Election day lunar eclipses
+and the timezones they were visible from:
+* Partial    Mon 1789-11-02 
+* Partial    Fri 1798-11-23 
+* Penumbral  Tue 1806-11-25 
+* Total      Thu 1808-11-03 
+* Total      Sun 1844-11-24 
+* Penumbral  Tue 1846-11-03 
+* *__Total      Tue 2022-11-08 AKST PST MST CST EST__*
+* Partial    Tue 2218-11-03 HST AKST 
+* Partial    Tue 2245-11-04 EST 
+* Penumbral  Tue 2367-11-07 HST AKST PST MST CST EST 
+* Total      Tue 2394-11-08 HST AKST 
+* Total      Tue 2590-11-02 EST 
+* Penumbral  Tue 2617-11-04 HST AKST PST 
+* Total      Tue 2655-11-06 
+* Penumbral  Tue 2682-11-07 AKST PST MST CST EST 
+* Partial    Tue 2739-11-07 HST AKST 
+* Partial    Tue 2766-11-08 
+* Total      Tue 2962-11-02 HST AKST PST 
 
-Election day lunar eclipses, and the timezones they were visible from:
-----------------------------------------
-* Partial    Mon 1789-11-02 19:20
-* Partial    Fri 1798-11-23 07:28
-* Penumbral  Tue 1806-11-25 21:08
-* Total      Thu 1808-11-03 03:16
-* Total      Sun 1844-11-24 17:53
-* Penumbral  Tue 1846-11-03 03:07
-* Partial    Tue 2218-11-03 05:59 HST US/Hawaii
-* Partial    Tue 2245-11-04 17:22 CST US/Eastern, US/Central
-* Penumbral  Tue 2367-11-07 05:19 CST US/Mountain, Pacific/Samoa, US/Pacific, US/Eastern, US/Central, US/Hawaii
-* Total      Tue 2394-11-08 06:06 HST US/Hawaii
-* Total      Tue 2590-11-02 17:38 CST US/Eastern, US/Central
-* Penumbral  Tue 2617-11-04 23:23 PST US/Hawaii, US/Pacific
-* Penumbral  Tue 2682-11-07 04:36 CST US/Mountain, Pacific/Samoa, US/Pacific, US/Eastern, US/Central, US/Hawaii
-* Partial    Tue 2739-11-07 06:32 HST US/Hawaii
-* Partial    Tue 2766-11-08 17:08 EST US/Eastern
-* Total      Tue 2962-11-02 23:46 PST US/Hawaii, US/Pacific
+
 
 Note: times are for maximum eclipse in the eastern timezone.
 

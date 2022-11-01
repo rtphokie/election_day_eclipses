@@ -78,22 +78,18 @@ def find_first_dow(year, month, dow):
     return d + datetime.timedelta(offset)
 
 
-def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
+def lunar_eclipses_on_election_day(firstyear=1789, lastyear=2999, types=['Total', 'Partial', 'Penumbral']):
     '''
     calculate lunar eclipses
     :param firstyear: first presidential election
     :param lastyear: last year available the ephemeris, for de406 this is 3000
     :return:
     '''
-    print(f"Election day lunar eclipses, and the timezones they were visible from:\n{'-' * 40}")
+    # lines=["Election day lunar eclipses, and the timezones they were visible from"]
+    lines = []
     t0 = ts.utc(firstyear, 1, 1)
-    t1 = ts.utc(lastyear, 1, 1)
+    t1 = ts.utc(lastyear, 12, 31)
     t, y, details = eclipselib.lunar_eclipses(t0, t1, ephemeris)  # mid eclipse time
-    all_election_year_eclipses = set()
-    all_election_year_visible_eclipses = set()
-    all_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
-    past_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
-    future_election_year_eclipse_by_type = {'Total': set(), 'Partial': set(), 'Penumbral': set()}
     for ti, yi in zip(t, y):
         utc = ti.utc_datetime()
         year = utc.year
@@ -103,39 +99,26 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=3000):
             continue
         eclipse_type = eclipselib.LUNAR_ECLIPSES[yi]
 
+        if eclipse_type not in types:
+            continue
 
-        visible_tzs = set()
         visible_times = set()
         for state, data_state in us_states_and_territories.items():
             tz = timezone(data_state['tz'])
             if year < data_state['year']:
                 continue  # not yet admitted to the union
             first_day, last_day = election_days(tz, utc.year)
-            eclipse_local_time = utc.astimezone(tz)
-            if first_day <= eclipse_local_time <= last_day:
-                all_election_year_eclipses.add(utc.astimezone(timezone('US/Eastern')))
+            eclipse_local_time = utc.astimezone(tz).replace(tzinfo=None)
+            if first_day <= eclipse_local_time and eclipse_local_time <= last_day:
                 altitude = moon_above_horizon(data_state['lat'], data_state['lon'], ti)
                 if altitude > 0:
-                    visible_tzs.add(data_state['tz'])
-                    visible_times.add(eclipse_local_time)
-                    all_election_year_visible_eclipses.add(utc.astimezone(timezone('US/Eastern')))
-                    all_election_year_eclipse_by_type[eclipse_type].add(year)
-                    if year < 2022:
-                        past_election_year_eclipse_by_type[eclipse_type].add(year)
-                    if year > 2022:
-                        future_election_year_eclipse_by_type[eclipse_type].add(year)
-        if len(visible_tzs) > 0:
-            print(f"{eclipse_type:10} {list(visible_times)[0].strftime('%a %Y-%m-%d %H:%M %Z')}")
-            print(f"   {', '.join(visible_tzs)}")
-
-    print('all election lunar eclipses')
-    print(len(all_election_year_eclipses))
-    print('all election visible lunar eclipses')
-    print(len(all_election_year_visible_eclipses))
-    print('past election lunar eclipses')
-    pprint(past_election_year_eclipse_by_type)
-    print('future election lunar eclipses')
-    pprint(future_election_year_eclipse_by_type)
+                    tzcode = utc.astimezone(tz).strftime('%Z')
+                    if tzcode == 'LMT':  # Local Mean Time, before timezones
+                        visible_times.add(f"{eclipse_type:10} {utc.astimezone(tz).strftime('%a %Y-%m-%d')}")
+                    else:
+                        visible_times.add(f"{eclipse_type:10} {utc.astimezone(tz).strftime('%a %Y-%m-%d %H:%M %Z')}")
+        lines += sorted(list(visible_times))
+    return lines
 
 
 def election_days(tz, year):
@@ -151,8 +134,8 @@ def election_days(tz, year):
     else:
         first_day = find_first_dow(year, 11, 0) + datetime.timedelta(days=1)
         last_day = first_day
-    first_day = first_day.replace(tzinfo=tz)
-    last_day = last_day.replace(tzinfo=tz)
+    first_day = first_day.replace(tzinfo=None)
+    last_day = last_day.replace(tzinfo=None)
     last_day = last_day.replace(hour=23, minute=59)
     return first_day, last_day
 
@@ -173,8 +156,18 @@ def moon_above_horizon(lat, lon, t):
 
 
 class MyTestCase(unittest.TestCase):
-    def test_something(self):
-        lunar_eclipses_on_election_day()
+    def test_2022(self):
+        lines = lunar_eclipses_on_election_day(firstyear=2022, lastyear=2023)
+        self.assertEqual(len(lines), 6)
+        print("\n".join(lines))
+
+    def test_1846_2022(self):
+        lines = lunar_eclipses_on_election_day(firstyear=1778, lastyear=2022)
+        self.assertEqual(len(lines), 12)
+
+    def test_2022_3000(self):
+        lines = lunar_eclipses_on_election_day(firstyear=2023, lastyear=2999)
+        self.assertEqual(len(lines), 36)
 
     def test_first_tues(self):
         first_tues_2022 = find_first_dow(2022, 11, 0) + datetime.timedelta(days=1)
@@ -184,4 +177,16 @@ class MyTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    lunar_eclipses_on_election_day()
+    lines = lunar_eclipses_on_election_day()
+    print(f"lunar eclipses on election day\n{'-'*40}")
+    prevyear=''
+    for line in lines:
+        year=line[15:19]
+        atoms=line.split()
+        if prevyear != year:
+            print(f"\n* {line[:25]}", end=' ')
+        if prevyear == year:
+            print(atoms[-1], end=' ')
+
+
+        prevyear=year
