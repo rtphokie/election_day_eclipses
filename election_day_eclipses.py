@@ -70,6 +70,13 @@ us_states_and_territories = {
 
 
 def find_first_dow(year, month, dow):
+    '''
+    finds the date of the first date of the given day of the week
+    :param year: year
+    :param month: month
+    :param dow: day of the week, 0 = Sunday
+    :return:
+    '''
     d = datetime.datetime(year, int(month), 1, tzinfo=datetime.timezone.utc)
     jlk = d.weekday()
     offset = dow - d.weekday()  # weekday = 0 means monday
@@ -83,9 +90,8 @@ def lunar_eclipses_on_election_day(firstyear=1789, lastyear=2999, types=['Total'
     calculate lunar eclipses
     :param firstyear: first presidential election
     :param lastyear: last year available the ephemeris, for de406 this is 3000
-    :return:
+    :return: list of strings with the type of the eclipse, day of the week, date, and timezone
     '''
-    # lines=["Election day lunar eclipses, and the timezones they were visible from"]
     lines = []
     t0 = ts.utc(firstyear, 1, 1)
     t1 = ts.utc(lastyear, 12, 31)
@@ -178,15 +184,14 @@ class MyTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     lines = lunar_eclipses_on_election_day()
-    print(f"lunar eclipses on election day\n{'-'*40}")
-    prevyear=''
+    print(f"lunar eclipses on election day\n{'-' * 40}")
+    prevyear = ''
     for line in lines:
-        year=line[15:19]
-        atoms=line.split()
+        year = line[15:19]
+        atoms = line.split()
         if prevyear != year:
             print(f"\n* {line[:25]}", end=' ')
         if prevyear == year:
             print(atoms[-1], end=' ')
 
-
-        prevyear=year
+        prevyear = year
